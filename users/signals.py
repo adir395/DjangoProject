@@ -18,10 +18,12 @@ def createdProfile(sender, instance, created, **kwargs):
 
 #@receiver(post_delete, sender=Profile)
 def profileDeleted(sender, instance, **kwargs):
-    user = instance.user
-    user.delete()
-
-    print('profile deleted!')
+    try:
+        print("Deleting user...")
+        user = instance.user
+        user.delete()
+    except User.DoesNotExist:
+        print("User does not exist. This has to do with the relationship between User and Profile.")
 
 post_save.connect(createdProfile, sender=User)
 post_delete.connect(profileDeleted, sender=Profile)
