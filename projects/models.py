@@ -2,6 +2,7 @@ from django.db import models
 import uuid
 from users.models import Profile
 
+
 class Project(models.Model):
     owner = models.ForeignKey(Profile, null=True, blank=True, on_delete=models.SET_NULL)
     title = models.CharField(max_length=200)
@@ -17,6 +18,10 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        ordering = ['created']
+
 
 
 class Review(models.Model):
