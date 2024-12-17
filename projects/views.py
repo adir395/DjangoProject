@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from .models import Project
-from .forms import ProjectForm
+from .forms import ProjectForm, ReviewForm
 from django.contrib.auth.decorators import login_required
 from .utils import *
-
+from django.contrib import messages
 
 
 def projects(request):
@@ -17,12 +17,24 @@ def projects(request):
 
 def project(request, pk):
     projectobj = Project.objects.get(id=pk)
-    print('projectobj:', projectobj)
+    form = ReviewForm()
+    if request.method == 'POST':
+        print("request = ",request)
+        print("request.POST = ",request.POST)
+        form = ReviewForm(request.POST)
+        review = form.save(commit=False)
+        review.project = projectobj
+        review.owner = request.user.profile
+        review.save()
+        projectobj.getVoteCount
+        messages.success(request, 'Your comment was successfully submitted')
+        return redirect ('project', pk=projectobj.id)
+
     return render(
         request,
         'projects/single-project.html',
-        {'project': projectobj})
-# Create your views here.
+        {'project': projectobj, 'form': form})
+
 
 @login_required(login_url='login')
 def createProject(request):
